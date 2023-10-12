@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  fastapi:
+    build:
+      context: ./
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    networks:
+      - app-network
+    command: sh -c "sleep 10 && alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
+  database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_DB: "quiz_database"
+networks:
+  app-network:
